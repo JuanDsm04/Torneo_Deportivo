@@ -53,7 +53,7 @@ function Login(req, res){
 }
 
 
-/* REGISTRAR UN NUEVO USUARIO (PARA USUARIOS)*/
+/* REGISTRARSE COMO UN NUEVO USUARIO (PARA USUARIOS)*/
 function registrarUsuario (req, res){
     var parametros = req.body;
     var usuarioModel = new Usuarios();
@@ -91,6 +91,7 @@ function registrarUsuario (req, res){
     }
 
 }
+
 
 /* REGISTRAR UN NUEVO USUARIO ADMINISTRADOR (PARA ADMINISTRADORES)*/
 function registrarUsuarioAdministrador (req, res){
@@ -133,6 +134,7 @@ function registrarUsuarioAdministrador (req, res){
     }
 
 }
+
 
 /* EDITAR USUARIO O PERFIL (PARA ADMINISTRADORES Y USUARIOS) */
 function editarUsuario (req, res){
@@ -182,6 +184,7 @@ function editarUsuario (req, res){
     }
 }
 
+
 /* ELIMINAR USUARIO (PARA ADMINISTRADORES) */
 function eliminarUsuario (req, res){
     var idUsu = req.params.idUsuario;
@@ -197,6 +200,7 @@ function eliminarUsuario (req, res){
     })
 
 }
+
 
 /* VISUALIZAR USUARIO (PARA ADMINISTRADORES) */
 function verUsuario(req, res){
