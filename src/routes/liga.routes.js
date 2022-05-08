@@ -17,5 +17,7 @@ api.post('/agregarLigaComoAdmin/:idUsuario', md_autenticacion.Auth, ligaControla
 api.put('/editarLigaComoAdmin/:idLiga', md_autenticacion.Auth, ligaControlador.editarLigaComoAdmin);
 api.delete('/eliminarLigaComoAdmin/:idLiga', md_autenticacion.Auth, ligaControlador.eliminarLigaComoAdmin);
 api.get('/verLigaComoAdmin/:idLiga', md_autenticacion.Auth, ligaControlador.verLigaComoAdmin);
+api.get('/resultadosLigaComoAdmin/:idLiga', md_autenticacion.Auth, ligaControlador.resultadosLigaComoAdmin);
+api.get('/crearPDFComoAdmin/:idLiga', md_autenticacion.Auth, ligaControlador.crearPDFComoAdmin);
 
 module.exports = api;

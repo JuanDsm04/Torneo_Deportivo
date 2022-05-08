@@ -124,7 +124,7 @@ function agregarPartido(req, res){
                                                                         // Actualizar los goles a favor y en contra del equipo 1
                                                                         Equipos.findOneAndUpdate({nombreEquipo: parametros.equipo1},
                                                                             {  $inc : {
-                                                                                partidosJugados: equipoEncontrado.partidosJugados *1,
+                                                                                partidosJugados: 1,
                                                                                 golesFavor: parametros.golesEquipo1,
                                                                                 golesContra: parametros.golesEquipo2,
                                                                                 diferenciaGoles: parametros.golesEquipo1 - parametros.golesEquipo2
@@ -138,7 +138,7 @@ function agregarPartido(req, res){
                                                                         if(parametros.golesEquipo1 > parametros.golesEquipo2){
                                                                             Equipos.findOneAndUpdate({nombreEquipo: parametros.equipo1},
                                                                                 {  $inc : {
-                                                                                    puntos: equipoEncontrado.puntos *3,
+                                                                                    puntos: 3,
                                                                                 }}, {new: true}, (err, equipo1Modificado)=>{
                                                                                         if(err) return res.status(500).send({mensaje: 'Error en la peticion'});
                                                                                         if(!equipo1Modificado) return res.status(404).send({mensaje: 'No se pudo modificar el equipo 1'});
@@ -147,7 +147,7 @@ function agregarPartido(req, res){
                                                                             if(parametros.golesEquipo1 == parametros.golesEquipo2){
                                                                                 Equipos.findOneAndUpdate({nombreEquipo: parametros.equipo1},
                                                                                     {  $inc : {
-                                                                                        puntos: equipoEncontrado.puntos *1,
+                                                                                        puntos: 1,
                                                                                     }}, {new: true}, (err, equipo1Modificado)=>{
                                                                                             if(err) return res.status(500).send({mensaje: 'Error en la peticion'});
                                                                                             if(!equipo1Modificado) return res.status(404).send({mensaje: 'No se pudo modificar el equipo 1'});
@@ -168,7 +168,7 @@ function agregarPartido(req, res){
                                                                         // Actualizar los goles a favor y encontra del equipo 2
                                                                         Equipos.findOneAndUpdate({nombreEquipo: parametros.equipo2},
                                                                             {  $inc : {
-                                                                                partidosJugados: equipoEncontrado.partidosJugados *1,
+                                                                                partidosJugados: 1,
                                                                                 golesFavor: parametros.golesEquipo2, 
                                                                                 golesContra: parametros.golesEquipo1,
                                                                                 diferenciaGoles: parametros.golesEquipo2 - parametros.golesEquipo1
@@ -181,7 +181,7 @@ function agregarPartido(req, res){
                                                                         if(parametros.golesEquipo2 > parametros.golesEquipo1){
                                                                             Equipos.findOneAndUpdate({nombreEquipo: parametros.equipo2},
                                                                                 {  $inc : {
-                                                                                    puntos: equipoEncontrado.puntos *3,
+                                                                                    puntos: 3,
                                                                                 }}, {new: true}, (err, equipo2Modificado)=>{
                                                                                         if(err) return res.status(500).send({mensaje: 'Error en la peticion'});
                                                                                         if(!equipo2Modificado) return res.status(404).send({mensaje: 'No se pudo modificar el equipo 2'});
@@ -190,7 +190,7 @@ function agregarPartido(req, res){
                                                                             if(parametros.golesEquipo2 == parametros.golesEquipo1){
                                                                                 Equipos.findOneAndUpdate({nombreEquipo: parametros.equipo2},
                                                                                     {  $inc : {
-                                                                                        puntos: equipoEncontrado.puntos *1,
+                                                                                        puntos: 1,
                                                                                     }}, {new: true}, (err, equipo2Modificado)=>{
                                                                                             if(err) return res.status(500).send({mensaje: 'Error en la peticion'});
                                                                                             if(!equipo2Modificado) return res.status(404).send({mensaje: 'No se pudo modificar el equipo 2'});
@@ -303,7 +303,7 @@ function agregarPartido(req, res){
                                                                         // Actualizar los goles a favor y en contra del equipo 1
                                                                         Equipos.findOneAndUpdate({nombreEquipo: parametros.equipo1},
                                                                             {  $inc : {
-                                                                                partidosJugados: equipoEncontrado.partidosJugados *1,
+                                                                                partidosJugados: 1,
                                                                                 golesFavor: parametros.golesEquipo1,
                                                                                 golesContra: parametros.golesEquipo2,
                                                                                 diferenciaGoles: parametros.golesEquipo1 - parametros.golesEquipo2
@@ -317,7 +317,7 @@ function agregarPartido(req, res){
                                                                         if(parametros.golesEquipo1 > parametros.golesEquipo2){
                                                                             Equipos.findOneAndUpdate({nombreEquipo: parametros.equipo1},
                                                                                 {  $inc : {
-                                                                                    puntos: equipoEncontrado.puntos *3,
+                                                                                    puntos: 3,
                                                                                 }}, {new: true}, (err, equipo1Modificado)=>{
                                                                                         if(err) return res.status(500).send({mensaje: 'Error en la peticion'});
                                                                                         if(!equipo1Modificado) return res.status(404).send({mensaje: 'No se pudo modificar el equipo 1'});
@@ -326,7 +326,7 @@ function agregarPartido(req, res){
                                                                             if(parametros.golesEquipo1 == parametros.golesEquipo2){
                                                                                 Equipos.findOneAndUpdate({nombreEquipo: parametros.equipo1},
                                                                                     {  $inc : {
-                                                                                        puntos: equipoEncontrado.puntos *1,
+                                                                                        puntos: 1,
                                                                                     }}, {new: true}, (err, equipo1Modificado)=>{
                                                                                             if(err) return res.status(500).send({mensaje: 'Error en la peticion'});
                                                                                             if(!equipo1Modificado) return res.status(404).send({mensaje: 'No se pudo modificar el equipo 1'});
@@ -347,7 +347,7 @@ function agregarPartido(req, res){
                                                                         // Actualizar los goles a favor y encontra del equipo 2
                                                                         Equipos.findOneAndUpdate({nombreEquipo: parametros.equipo2},
                                                                             {  $inc : {
-                                                                                partidosJugados: equipoEncontrado.partidosJugados *1,
+                                                                                partidosJugados: 1,
                                                                                 golesFavor: parametros.golesEquipo2, 
                                                                                 golesContra: parametros.golesEquipo1,
                                                                                 diferenciaGoles: parametros.golesEquipo2 - parametros.golesEquipo1
@@ -360,7 +360,7 @@ function agregarPartido(req, res){
                                                                         if(parametros.golesEquipo2 > parametros.golesEquipo1){
                                                                             Equipos.findOneAndUpdate({nombreEquipo: parametros.equipo2},
                                                                                 {  $inc : {
-                                                                                    puntos: equipoEncontrado.puntos *3,
+                                                                                    puntos: 3,
                                                                                 }}, {new: true}, (err, equipo2Modificado)=>{
                                                                                         if(err) return res.status(500).send({mensaje: 'Error en la peticion'});
                                                                                         if(!equipo2Modificado) return res.status(404).send({mensaje: 'No se pudo modificar el equipo 2'});
@@ -369,7 +369,7 @@ function agregarPartido(req, res){
                                                                             if(parametros.golesEquipo2 == parametros.golesEquipo1){
                                                                                 Equipos.findOneAndUpdate({nombreEquipo: parametros.equipo2},
                                                                                     {  $inc : {
-                                                                                        puntos: equipoEncontrado.puntos *1,
+                                                                                        puntos: 1,
                                                                                     }}, {new: true}, (err, equipo2Modificado)=>{
                                                                                             if(err) return res.status(500).send({mensaje: 'Error en la peticion'});
                                                                                             if(!equipo2Modificado) return res.status(404).send({mensaje: 'No se pudo modificar el equipo 2'});
@@ -537,7 +537,7 @@ function agregarPartidoComoAdmin(req, res){
                                                                                     // Actualizar los goles a favor y en contra del equipo 1
                                                                                     Equipos.findOneAndUpdate({nombreEquipo: parametros.equipo1},
                                                                                         {  $inc : {
-                                                                                            partidosJugados: equipoEncontrado.partidosJugados *1,
+                                                                                            partidosJugados: 1,
                                                                                             golesFavor: parametros.golesEquipo1,
                                                                                             golesContra: parametros.golesEquipo2,
                                                                                             diferenciaGoles: parametros.golesEquipo1 - parametros.golesEquipo2
@@ -551,7 +551,7 @@ function agregarPartidoComoAdmin(req, res){
                                                                                     if(parametros.golesEquipo1 > parametros.golesEquipo2){
                                                                                         Equipos.findOneAndUpdate({nombreEquipo: parametros.equipo1},
                                                                                             {  $inc : {
-                                                                                                puntos: equipoEncontrado.puntos *3,
+                                                                                                puntos: 3,
                                                                                             }}, {new: true}, (err, equipo1Modificado)=>{
                                                                                                     if(err) return res.status(500).send({mensaje: 'Error en la peticion'});
                                                                                                     if(!equipo1Modificado) return res.status(404).send({mensaje: 'No se pudo modificar el equipo 1'});
@@ -560,7 +560,7 @@ function agregarPartidoComoAdmin(req, res){
                                                                                         if(parametros.golesEquipo1 == parametros.golesEquipo2){
                                                                                             Equipos.findOneAndUpdate({nombreEquipo: parametros.equipo1},
                                                                                                 {  $inc : {
-                                                                                                    puntos: equipoEncontrado.puntos *1,
+                                                                                                    puntos: 1,
                                                                                                 }}, {new: true}, (err, equipo1Modificado)=>{
                                                                                                         if(err) return res.status(500).send({mensaje: 'Error en la peticion'});
                                                                                                         if(!equipo1Modificado) return res.status(404).send({mensaje: 'No se pudo modificar el equipo 1'});
@@ -581,7 +581,7 @@ function agregarPartidoComoAdmin(req, res){
                                                                                     // Actualizar los goles a favor y encontra del equipo 2
                                                                                     Equipos.findOneAndUpdate({nombreEquipo: parametros.equipo2},
                                                                                         {  $inc : {
-                                                                                            partidosJugados: equipoEncontrado.partidosJugados *1,
+                                                                                            partidosJugados: 1,
                                                                                             golesFavor: parametros.golesEquipo2, 
                                                                                             golesContra: parametros.golesEquipo1,
                                                                                             diferenciaGoles: parametros.golesEquipo2 - parametros.golesEquipo1
@@ -594,7 +594,7 @@ function agregarPartidoComoAdmin(req, res){
                                                                                     if(parametros.golesEquipo2 > parametros.golesEquipo1){
                                                                                         Equipos.findOneAndUpdate({nombreEquipo: parametros.equipo2},
                                                                                             {  $inc : {
-                                                                                                puntos: equipoEncontrado.puntos *3,
+                                                                                                puntos: 3,
                                                                                             }}, {new: true}, (err, equipo2Modificado)=>{
                                                                                                     if(err) return res.status(500).send({mensaje: 'Error en la peticion'});
                                                                                                     if(!equipo2Modificado) return res.status(404).send({mensaje: 'No se pudo modificar el equipo 2'});
@@ -603,7 +603,7 @@ function agregarPartidoComoAdmin(req, res){
                                                                                         if(parametros.golesEquipo2 == parametros.golesEquipo1){
                                                                                             Equipos.findOneAndUpdate({nombreEquipo: parametros.equipo2},
                                                                                                 {  $inc : {
-                                                                                                    puntos: equipoEncontrado.puntos *1,
+                                                                                                    puntos: 1,
                                                                                                 }}, {new: true}, (err, equipo2Modificado)=>{
                                                                                                         if(err) return res.status(500).send({mensaje: 'Error en la peticion'});
                                                                                                         if(!equipo2Modificado) return res.status(404).send({mensaje: 'No se pudo modificar el equipo 2'});

@@ -231,18 +231,12 @@ function verLigaComoAdmin(req, res){
 function resultadosLiga(req, res){
     var idLig = req.params.idLiga;
 
-
     Equipos.find({idCreadorEquipo: req.user.sub, idLiga: idLig},
     {"_id":0,"nombreEquipo":1, "puntos":1, "golesFavor":1, "golesContra":1, "diferenciaGoles":1, "partidosJugados":1}, 
     (err, equiposEncontrados)=>{
         if (err) return res.status(500).send({mensaje: 'Error en la peticion'});
         if(!equiposEncontrados) return res.status(404).send({mensaje: "Ocurrio un error"});
         if(equiposEncontrados.length == 0) return res.status(500).send({mensaje: 'Aun no tiene equipos en la liga o intento ver los equipos de una liga que no le pertenece'})
-        
-        //for(let i = 0; i < equiposEncontrados.length; i++){
-           
-            //console.table(equiposEncontrados, ["Equipos", "Goles a Favor", "Goles en Contra", "Diferencia de Goles", "Puntos",]);
-        //}
 
         return res.status(200).send({equipos: equiposEncontrados});
         
@@ -250,6 +244,42 @@ function resultadosLiga(req, res){
 }
 
 
+/* VER LOS PUNTEOS DE LOS EQUIPOS POR LIGAS COMO ADMINISTRADOR GENERAL */
+function resultadosLigaComoAdmin(req, res){
+    var idLig = req.params.idLiga;
+
+    var parametros = req.body;
+
+    if(req.user.rol == 'USUARIO')
+    return res.status(404).send({mensaje: "Solo los administradores tienen acceso a este apartado"});
+
+    if(parametros.idUsuario){
+        Usuarios.find({_id: parametros.idUsuario, rol: 'USUARIO'},(err, usuarioEncontrado)=>{
+            if(usuarioEncontrado.length != 0){
+
+                Equipos.find({idCreadorEquipo: parametros.idUsuario, idLiga: idLig},
+                    {"_id":0,"nombreEquipo":1, "puntos":1, "golesFavor":1, "golesContra":1, "diferenciaGoles":1, "partidosJugados":1}, 
+                    (err, equiposEncontrados)=>{
+                        if (err) return res.status(500).send({mensaje: 'Error en la peticion'});
+                        if(!equiposEncontrados) return res.status(404).send({mensaje: "Ocurrio un error"});
+                        if(equiposEncontrados.length == 0) return res.status(500).send({mensaje: 'El usuario elegido un no tiene equipos en la liga o intento ver los equipos de una liga que no le pertenece al usuario elegido'})
+                
+                        return res.status(200).send({equipos: equiposEncontrados});
+                        
+                    }).sort( { puntos: -1 }).limit(10)
+
+            }else{
+                return res.status(404).send({mensaje: "No puede ver los resultados de una liga de un administrador, solo las de los usuarios"});
+            }
+        })
+
+    }else{
+        return res.status(404).send({mensaje: "Debe ingresar el id del usuario al que le pertenece la liga de la cual quiere ver los resultados"});
+    }
+}
+
+
+/* GENERAR UN PDF TABLA CON LOS RESULTADOS DE LA LIGA */
 function crearPDF(req, res) { 
     var idLig = req.params.idLiga;
     const fs = require('fs');
@@ -271,169 +301,385 @@ function crearPDF(req, res) {
         if(err) return res.status(500).send({ mensaje: "Error en la peticion" });
         if(!equiposObtenidos) return res.status(500).send({ mensaje: "Error al obtener los equipos"});
 
-        Ligas.findOne({idLiga: idLig, idCreadorLiga: req.user.sub}, (err, ligaEncontrada)=>{
-            var nombreLiga = ligaEncontrada.nombreLiga;
+        Ligas.find({idLiga: idLig, idCreadorLiga: req.user.sub}, (err, ligaEncontrada)=>{
+            
+            Ligas.findById(idLig, (err, ligaEncontrada)=>{
+                var nombreLiga = ligaEncontrada.nombreLiga;
 
-            for(let i = 0; i < equiposObtenidos.length; i++){
-                let content = [      
-                ]
-
-                content.push({
-                    text: "Reporte de la Liga"+ "\n"+nombreLiga,
-                    alignment: 'center',
-                    fontSize: 28,
-                    color: '#1A5276',
-                    bold: true,
-                    italics: true,
-                })
-
-                content.push({
-                    text: "\n"+"\n"+'------------------------------------------------------------------------------------------------------------------'+"\n",
-                    color: '#1A5276',
-                    bold: true,
-                })
-
-                content.push({
-                    columns: [
-                        {
-                          width: '16%',
-                          fontSize: 11,
-                          alignment: 'center',
-                          text: 'Equipo'
-                        },
-                        {
-                          width: '16%',
-                          fontSize: 11,
-                          alignment: 'center',
-                          text: 'Goles a'+'\n'+ 'Favor'
-                        },
-                        {
-                          width: '16%',
-                          fontSize: 11,
-                          alignment: 'center',
-                          text: 'Goles en Contra'
-                        },
-                        {
-                          width: '16%',
-                          fontSize: 11,
-                          alignment: 'center',
-                          text: 'Diferencia de Goles'
-                        },
-                        {
-                          width: '16%',
-                          fontSize: 11,
-                          alignment: 'center',
-                          text: 'Partidos Jugados'
-                        },
-                        {
-                          width: '16%',
-                          fontSize: 11,
-                          alignment: 'center',
-                          text: 'Puntos'
-                        }
-                      ],
-                })
-    
-                content.push({
-                    text: '------------------------------------------------------------------------------------------------------------------'+"\n"+"\n",
-                    color: '#1A5276',
-                    bold: true,
-                })
-    
                 for(let i = 0; i < equiposObtenidos.length; i++){
+                    let content = [      
+                    ]
+    
+                    content.push({
+                        text: "Reporte de la Liga"+ "\n"+nombreLiga,
+                        alignment: 'center',
+                        fontSize: 28,
+                        color: '#1A5276',
+                        bold: true,
+                        italics: true,
+                    })
+    
+                    content.push({
+                        text: "\n"+"\n"+'------------------------------------------------------------------------------------------------------------------'+"\n",
+                        color: '#1A5276',
+                        bold: true,
+                    })
     
                     content.push({
                         columns: [
                             {
                               width: '16%',
-                              fontSize: 10,
-                              text: equiposObtenidos[i].nombreEquipo
+                              fontSize: 11,
+                              alignment: 'center',
+                              text: 'Equipo'
                             },
                             {
                               width: '16%',
-                              fontSize: 10,
+                              fontSize: 11,
                               alignment: 'center',
-                              text: equiposObtenidos[i].golesFavor
+                              text: 'Goles a'+'\n'+ 'Favor'
                             },
                             {
                               width: '16%',
-                              fontSize: 10,
+                              fontSize: 11,
                               alignment: 'center',
-                              text: equiposObtenidos[i].golesContra
+                              text: 'Goles en Contra'
                             },
                             {
                               width: '16%',
-                              fontSize: 10,
+                              fontSize: 11,
                               alignment: 'center',
-                              text: equiposObtenidos[i].diferenciaGoles
+                              text: 'Diferencia de Goles'
                             },
                             {
                               width: '16%',
-                              fontSize: 10,
+                              fontSize: 11,
                               alignment: 'center',
-                              text: equiposObtenidos[i].partidosJugados
+                              text: 'Partidos Jugados'
                             },
                             {
                               width: '16%',
-                              fontSize: 10,
+                              fontSize: 11,
                               alignment: 'center',
-                              text: equiposObtenidos[i].puntos
+                              text: 'Puntos'
                             }
-                          ]
+                          ],
                     })
-    
+        
                     content.push({
-                        text: '___________________________________________________________________________________'+"\n"+"\n",
-                        color: '#154360',
+                        text: '------------------------------------------------------------------------------------------------------------------'+"\n"+"\n",
+                        color: '#1A5276',
+                        bold: true,
                     })
-                }
-    
-                let footerPdf = {
-                    background: function () {
-                        return {
-                            canvas: [
+        
+                    for(let i = 0; i < equiposObtenidos.length; i++){
+        
+                        content.push({
+                            columns: [
                                 {
-                                    color: '#1A5276',
-                                    type: 'rect',
-                                    x: 0, y: 0, w: 595, h: 45
-                                    
+                                  width: '16%',
+                                  fontSize: 10,
+                                  text: equiposObtenidos[i].nombreEquipo
                                 },
                                 {
-                                    color: '#AED6F1',
-                                    type: 'rect',
-                                    x: 0, y: 20, w: 595, h: 100
-                                    
+                                  width: '16%',
+                                  fontSize: 10,
+                                  alignment: 'center',
+                                  text: equiposObtenidos[i].golesFavor
+                                },
+                                {
+                                  width: '16%',
+                                  fontSize: 10,
+                                  alignment: 'center',
+                                  text: equiposObtenidos[i].golesContra
+                                },
+                                {
+                                  width: '16%',
+                                  fontSize: 10,
+                                  alignment: 'center',
+                                  text: equiposObtenidos[i].diferenciaGoles
+                                },
+                                {
+                                  width: '16%',
+                                  fontSize: 10,
+                                  alignment: 'center',
+                                  text: equiposObtenidos[i].partidosJugados
+                                },
+                                {
+                                  width: '16%',
+                                  fontSize: 10,
+                                  alignment: 'center',
+                                  text: equiposObtenidos[i].puntos
                                 }
-                            ]
-                        };
-                    },
-                    footer: {
-                        margin: [72, 0, 72, 0],
-                        fontSize: 10,
-                        color: '#1A5276',
-                        columns: [{
-                                with: 'auto',
-                                alignment: 'left',
-                                text: '____________________________________________________________________________________________________' +"\n" +
-                                'Información perteneciente a la liga ©' + nombreLiga
-                            }
-            
-                        ],
-                    },
-    
-                    content: content,
-                    pageMargins: [72, 41, 72, 70],
+                              ]
+                        })
+        
+                        content.push({
+                            text: '___________________________________________________________________________________'+"\n"+"\n",
+                            color: '#154360',
+                        })
+                    }
+        
+                    let footerPdf = {
+                        background: function () {
+                            return {
+                                canvas: [
+                                    {
+                                        color: '#1A5276',
+                                        type: 'rect',
+                                        x: 0, y: 0, w: 595, h: 45
+                                        
+                                    },
+                                    {
+                                        color: '#AED6F1',
+                                        type: 'rect',
+                                        x: 0, y: 20, w: 595, h: 100
+                                        
+                                    }
+                                ]
+                            };
+                        },
+                        footer: {
+                            margin: [72, 0, 72, 0],
+                            fontSize: 10,
+                            color: '#1A5276',
+                            columns: [{
+                                    with: 'auto',
+                                    alignment: 'left',
+                                    text: '____________________________________________________________________________________________________' +"\n" +
+                                    'Información perteneciente a la liga ©' + nombreLiga
+                                }
+                
+                            ],
+                        },
+        
+                        content: content,
+                        pageMargins: [72, 41, 72, 70],
+                    }
+                
+                    pdfDoc = pdfmake.createPdfKitDocument(footerPdf, {});
+                    pdfDoc.pipe(fs.createWriteStream('pdfs/reporte'+nombreLiga+'.pdf'));
+                    pdfDoc.end();
+                    return res.status(200).send({ mensaje: 'Archivo pdf generado correctamente' });
                 }
+
+            })
+
             
-                pdfDoc = pdfmake.createPdfKitDocument(footerPdf, {});
-                pdfDoc.pipe(fs.createWriteStream('pdfs/reporte'+nombreLiga+'.pdf'));
-                pdfDoc.end();
-                return res.status(200).send({ mensaje: 'Archivo pdf generado correctamente' });
-            }
             
         })
     }).sort( { puntos: -1 }).limit(10)
 }
+
+
+/* GENERAR UN PDF TABLA CON LOS RESULTADOS DE LA LIGA QUE QUIERA, DEL USUARIO QUE QUIERA (FUNCION DE ADMINISTRADOR) */
+function crearPDFComoAdmin(req, res) { 
+    var idLig = req.params.idLiga;
+    var parametros = req.body;
+    const fs = require('fs');
+
+    const Pdfmake = require('pdfmake');
+
+    var fonts = {
+        Roboto: {
+            normal: './fonts/roboto/Roboto-Regular.ttf',
+            bold: './fonts/roboto/Roboto-Medium.ttf',
+            italics: './fonts/roboto/Roboto-Italic.ttf',
+            bolditalics: './fonts/roboto/Roboto-MediumItalic.ttf'
+        }
+    };
+
+    let pdfmake = new Pdfmake(fonts);
+
+    if(req.user.rol == 'USUARIO')
+    return res.status(404).send({mensaje: "Solo los administradores tienen acceso a este apartado"});
+
+
+    if(parametros.idUsuario){
+        Usuarios.find({_id: parametros.idUsuario, rol: 'USUARIO'},(err, usuarioEncontrado)=>{
+            if(usuarioEncontrado.length != 0){
+
+                Equipos.find({ idCreadorEquipo: parametros.idUsuario, idLiga: idLig }, (err, equiposObtenidos) => {
+                    if(err) return res.status(500).send({ mensaje: "Error en la peticion" });
+                    if(!equiposObtenidos) return res.status(500).send({ mensaje: "Error al obtener los equipos"});
+            
+                    Ligas.find({idLiga: idLig, idCreadorLiga: parametros.idUsuario}, (err, ligaEncontrada)=>{
+                        if(!ligaEncontrada) return res.status(500).send({ mensaje: "Error al obtener la liga"});
+
+                        Ligas.findById(idLig, (err, ligaEncontrada)=>{
+                            var nombreLiga = ligaEncontrada.nombreLiga;
+
+                            for(let i = 0; i < equiposObtenidos.length; i++){
+                                let content = [      
+                                ]
+                
+                                content.push({
+                                    text: "Reporte de la Liga"+ "\n"+nombreLiga,
+                                    alignment: 'center',
+                                    fontSize: 28,
+                                    color: '#1A5276',
+                                    bold: true,
+                                    italics: true,
+                                })
+                
+                                content.push({
+                                    text: "\n"+"\n"+'------------------------------------------------------------------------------------------------------------------'+"\n",
+                                    color: '#1A5276',
+                                    bold: true,
+                                })
+                
+                                content.push({
+                                    columns: [
+                                        {
+                                          width: '16%',
+                                          fontSize: 11,
+                                          alignment: 'center',
+                                          text: 'Equipo'
+                                        },
+                                        {
+                                          width: '16%',
+                                          fontSize: 11,
+                                          alignment: 'center',
+                                          text: 'Goles a'+'\n'+ 'Favor'
+                                        },
+                                        {
+                                          width: '16%',
+                                          fontSize: 11,
+                                          alignment: 'center',
+                                          text: 'Goles en Contra'
+                                        },
+                                        {
+                                          width: '16%',
+                                          fontSize: 11,
+                                          alignment: 'center',
+                                          text: 'Diferencia de Goles'
+                                        },
+                                        {
+                                          width: '16%',
+                                          fontSize: 11,
+                                          alignment: 'center',
+                                          text: 'Partidos Jugados'
+                                        },
+                                        {
+                                          width: '16%',
+                                          fontSize: 11,
+                                          alignment: 'center',
+                                          text: 'Puntos'
+                                        }
+                                      ],
+                                })
+                    
+                                content.push({
+                                    text: '------------------------------------------------------------------------------------------------------------------'+"\n"+"\n",
+                                    color: '#1A5276',
+                                    bold: true,
+                                })
+                    
+                                for(let i = 0; i < equiposObtenidos.length; i++){
+                    
+                                    content.push({
+                                        columns: [
+                                            {
+                                              width: '16%',
+                                              fontSize: 10,
+                                              text: equiposObtenidos[i].nombreEquipo
+                                            },
+                                            {
+                                              width: '16%',
+                                              fontSize: 10,
+                                              alignment: 'center',
+                                              text: equiposObtenidos[i].golesFavor
+                                            },
+                                            {
+                                              width: '16%',
+                                              fontSize: 10,
+                                              alignment: 'center',
+                                              text: equiposObtenidos[i].golesContra
+                                            },
+                                            {
+                                              width: '16%',
+                                              fontSize: 10,
+                                              alignment: 'center',
+                                              text: equiposObtenidos[i].diferenciaGoles
+                                            },
+                                            {
+                                              width: '16%',
+                                              fontSize: 10,
+                                              alignment: 'center',
+                                              text: equiposObtenidos[i].partidosJugados
+                                            },
+                                            {
+                                              width: '16%',
+                                              fontSize: 10,
+                                              alignment: 'center',
+                                              text: equiposObtenidos[i].puntos
+                                            }
+                                          ]
+                                    })
+                    
+                                    content.push({
+                                        text: '___________________________________________________________________________________'+"\n"+"\n",
+                                        color: '#154360',
+                                    })
+                                }
+                    
+                                let footerPdf = {
+                                    background: function () {
+                                        return {
+                                            canvas: [
+                                                {
+                                                    color: '#1A5276',
+                                                    type: 'rect',
+                                                    x: 0, y: 0, w: 595, h: 45
+                                                    
+                                                },
+                                                {
+                                                    color: '#AED6F1',
+                                                    type: 'rect',
+                                                    x: 0, y: 20, w: 595, h: 100
+                                                    
+                                                }
+                                            ]
+                                        };
+                                    },
+                                    footer: {
+                                        margin: [72, 0, 72, 0],
+                                        fontSize: 10,
+                                        color: '#1A5276',
+                                        columns: [{
+                                                with: 'auto',
+                                                alignment: 'left',
+                                                text: '____________________________________________________________________________________________________' +"\n" +
+                                                'Información perteneciente a la liga ©' + nombreLiga
+                                            }
+                            
+                                        ],
+                                    },
+                    
+                                    content: content,
+                                    pageMargins: [72, 41, 72, 70],
+                                }
+                            
+                                pdfDoc = pdfmake.createPdfKitDocument(footerPdf, {});
+                                pdfDoc.pipe(fs.createWriteStream('pdfs/reporteAdmin'+nombreLiga+'.pdf'));
+                                pdfDoc.end();
+                                return res.status(200).send({ mensaje: 'Archivo pdf generado correctamente' });
+                            }
+                        })
+                        
+                    })
+                }).sort( { puntos: -1 }).limit(10)
+
+            }else{
+                return res.status(404).send({mensaje: "No puede hacer un pdf de la tabla de resultados con la liga de un administrador, solo las de los usuarios"});
+            }
+        })
+
+    }else{
+        return res.status(404).send({mensaje: "Debe ingresar el id del usuario al que le pertenece la liga de la cual quiere generar la tabla en pdf de los resultados"});
+    }
+}
+
 
 
 module.exports = {
@@ -448,5 +694,7 @@ module.exports = {
     agregarLigaComoAdmin,
     editarLigaComoAdmin,
     eliminarLigaComoAdmin,
-    verLigaComoAdmin
+    verLigaComoAdmin,
+    resultadosLigaComoAdmin,
+    crearPDFComoAdmin
 }
